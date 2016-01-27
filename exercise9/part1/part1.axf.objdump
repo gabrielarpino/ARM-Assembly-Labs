@@ -1,0 +1,105 @@
+
+//SRVC/Homes$/harri346/Documents/QuartusII/exercise9/part1/part1.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+	.text
+	.global _start
+
+_start: 	
+		MOV	R2, #0		//set loop counter
+   0:	e3a02000 	mov	r2, #0
+		LDR	R0, =LIST	//R7 GETS SIZE
+   4:	e59f009c 	ldr	r0, [pc, #156]	; a8 <LIST+0x2c>
+		LDR	R1, [R0]		//SIZE STORED IN R1		
+   8:	e5901000 	ldr	r1, [r0]
+
+0000000c <OUTERLOOP>:
+OUTERLOOP:	
+		MOV R7,R0	
+   c:	e1a07000 	mov	r7, r0
+		CMP	R2, R1
+  10:	e1520001 	cmp	r2, r1
+		BEQ	END
+  14:	0a000004 	beq	2c <END>
+		ADD	R7,#4		//R8 BECOMES FIRST LIST INDEX
+  18:	e2877004 	add	r7, r7, #4
+		ADD	R8,R7,#4	//R8 BECOMES SECOND LIST INDEX
+  1c:	e2878004 	add	r8, r7, #4
+		BL	FCNTWO		//GO TO INNER LOOP
+  20:	eb000002 	bl	30 <FCNTWO>
+		ADD	R2, R2, #1
+  24:	e2822001 	add	r2, r2, #1
+		B	OUTERLOOP
+  28:	eafffff7 	b	c <OUTERLOOP>
+
+0000002c <END>:
+END:		B	END
+  2c:	eafffffe 	b	2c <END>
+
+00000030 <FCNTWO>:
+
+
+FCNTWO:	PUSH {LR}
+  30:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+		MOV	R3, #0		//SET LOOP COUNTER
+  34:	e3a03000 	mov	r3, #0
+		SUB	R4, R1,R2		//LET DESIRED NUMBER OF ITERATIONS IN R4
+  38:	e0414002 	sub	r4, r1, r2
+
+0000003c <INNERLOOP>:
+INNERLOOP:	CMP	R3,R4		
+  3c:	e1530004 	cmp	r3, r4
+		BEQ	ENDINNERLOOP
+  40:	0a000007 	beq	64 <ENDINNERLOOP>
+		LDR R10,[R7]
+  44:	e597a000 	ldr	r10, [r7]
+		LDR R11, [R8]
+  48:	e598b000 	ldr	r11, [r8]
+		CMP	R10,R11		//CHECK IT T1 > T2, IF SO SWAP
+  4c:	e15a000b 	cmp	r10, r11
+		BLGT	SWAP
+  50:	cb000005 	blgt	6c <SWAP>
+		ADD	R7,R7,#4	//MOVE ALL TERMS RIGHT ONE
+  54:	e2877004 	add	r7, r7, #4
+		ADD	R8,R8,#4
+  58:	e2888004 	add	r8, r8, #4
+		ADD	R3,R3,#1	//ADD ONE TO COUNTER
+  5c:	e2833001 	add	r3, r3, #1
+		B	INNERLOOP
+  60:	eafffff5 	b	3c <INNERLOOP>
+
+00000064 <ENDINNERLOOP>:
+ENDINNERLOOP:	
+		POP {LR}
+  64:	e49de004 	pop	{lr}		; (ldr lr, [sp], #4)
+		MOV	PC, LR
+  68:	e1a0f00e 	mov	pc, lr
+
+0000006c <SWAP>:
+
+
+SWAP:	MOV	R5,R7
+  6c:	e1a05007 	mov	r5, r7
+		STR	R11,[R7]
+  70:	e587b000 	str	r11, [r7]
+		STR	R10,[R8]
+  74:	e588a000 	str	r10, [r8]
+		MOV 	PC,LR
+  78:	e1a0f00e 	mov	pc, lr
+
+0000007c <LIST>:
+  7c:	0000000a 	.word	0x0000000a
+  80:	00000578 	.word	0x00000578
+  84:	0000002d 	.word	0x0000002d
+  88:	00000017 	.word	0x00000017
+  8c:	00000005 	.word	0x00000005
+  90:	00000003 	.word	0x00000003
+  94:	00000008 	.word	0x00000008
+  98:	00000011 	.word	0x00000011
+  9c:	00000004 	.word	0x00000004
+  a0:	00000014 	.word	0x00000014
+  a4:	00000021 	.word	0x00000021
+  a8:	0000007c 	.word	0x0000007c

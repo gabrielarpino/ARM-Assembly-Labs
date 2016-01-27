@@ -1,0 +1,132 @@
+
+//SRVC/Homes$/harri346/Documents/QuartusII/exercise9/PART2/part2.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+	.text
+	.global _start
+
+_start:   
+		LDR 	R1, =0xFF200000		// LEDR Port	
+   0:	e59f10c0 	ldr	r1, [pc, #192]	; c8 <LIST+0x24>
+		LDR 	R8, =LIST		//R8 gets size of list
+   4:	e59f80c0 	ldr	r8, [pc, #192]	; cc <LIST+0x28>
+		LDR 	R2, [R8]			// make a register that stores value of list size (first value in list)
+   8:	e5982000 	ldr	r2, [r8]
+		ADD 	R8, #4			//R8 moves to first index in list
+   c:	e2888004 	add	r8, r8, #4
+		MOV 	R5, #0			// counts number of words iterated
+  10:	e3a05000 	mov	r5, #0
+		LDR 	R9, =0xFF200050		// R9 is the key
+  14:	e59f90b4 	ldr	r9, [pc, #180]	; d0 <LIST+0x2c>
+
+00000018 <DISPLAY>:
+		
+
+DISPLAY:  
+	CMP 	R5,R2		//compare number of words iterated to total number of words
+  18:	e1550002 	cmp	r5, r2
+	BEQ 	REVERSE_DISPLAY
+  1c:	0a000009 	beq	48 <REVERSE_DISPLAY>
+	LDR 	R6,=200 		// Delay counter
+  20:	e3a060c8 	mov	r6, #200	; 0xc8
+	LDR 	R11,[R8]
+  24:	e598b000 	ldr	r11, [r8]
+	STR 	R11,[R1]		//light up LEDR
+  28:	e581b000 	str	r11, [r1]
+	LDR 	R10, [R9]	//read keys
+  2c:	e599a000 	ldr	r10, [r9]
+	CMP 	R10,#0		//compare, see if equals 0 or 1
+  30:	e35a0000 	cmp	r10, #0
+	BNE 	KEYRESTART	//restart loop if key is pressed
+  34:	1a00000f 	bne	78 <KEYRESTART>
+
+	BL 	DELAY
+  38:	eb000015 	bl	94 <DELAY>
+	
+	ADD 	R5,#1
+  3c:	e2855001 	add	r5, r5, #1
+	ADD 	R8, #4		//next word in list
+  40:	e2888004 	add	r8, r8, #4
+	B 	DISPLAY
+  44:	eafffff3 	b	18 <DISPLAY>
+
+00000048 <REVERSE_DISPLAY>:
+
+REVERSE_DISPLAY:
+	CMP 	R5,#0		//compare number of words iterated to total number of words
+  48:	e3550000 	cmp	r5, #0
+	BEQ 	DISPLAY
+  4c:	0afffff1 	beq	18 <DISPLAY>
+
+	LDR 	R6,=200		// Delay counter
+  50:	e3a060c8 	mov	r6, #200	; 0xc8
+	LDR 	R11,[R8]
+  54:	e598b000 	ldr	r11, [r8]
+	STR 	R11,[R1]		//light up LEDR
+  58:	e581b000 	str	r11, [r1]
+	SUB 	R8, #4		//previous word in list
+  5c:	e2488004 	sub	r8, r8, #4
+	SUB 	R5,#1
+  60:	e2455001 	sub	r5, r5, #1
+
+	LDR 	R10, [R9]		//read keys
+  64:	e599a000 	ldr	r10, [r9]
+	CMP 	R10,#0		//compare, see if equals 0 or 1 depending on what means key is on
+  68:	e35a0000 	cmp	r10, #0
+	BNE 	KEYRESTART	//restart loop if key is pressed
+  6c:	1a000001 	bne	78 <KEYRESTART>
+
+	BL 	DELAY
+  70:	eb000007 	bl	94 <DELAY>
+	B	REVERSE_DISPLAY
+  74:	eafffff3 	b	48 <REVERSE_DISPLAY>
+
+00000078 <KEYRESTART>:
+
+
+KEYRESTART:
+
+	LDR 	R8, =LIST			//R8 gets size of list
+  78:	e59f804c 	ldr	r8, [pc, #76]	; cc <LIST+0x28>
+	ADD 	R8, #4			//R8 moves to first index in list
+  7c:	e2888004 	add	r8, r8, #4
+MOV 	R5, #0			// counts number of words iterated	
+  80:	e3a05000 	mov	r5, #0
+	LDR 	R10, [R9]		//read keys
+  84:	e599a000 	ldr	r10, [r9]
+	CMP 	R10,#0		//compare, see if equals 0 or 1 depending on what means key is on
+  88:	e35a0000 	cmp	r10, #0
+	BNE 	DISPLAY
+  8c:	1affffe1 	bne	18 <DISPLAY>
+	B 	KEYRESTART
+  90:	eafffff8 	b	78 <KEYRESTART>
+
+00000094 <DELAY>:
+	
+
+DELAY:
+	SUB 	R6,#1			//-1 per iteration
+  94:	e2466001 	sub	r6, r6, #1
+	CMP		R6,#0			//when not equal to zero, repeat
+  98:	e3560000 	cmp	r6, #0
+	BNE 	DELAY
+  9c:	1afffffc 	bne	94 <DELAY>
+	MOV		PC,LR
+  a0:	e1a0f00e 	mov	pc, lr
+
+000000a4 <LIST>:
+  a4:	00000008 	.word	0x00000008
+  a8:	00000001 	.word	0x00000001
+  ac:	00000002 	.word	0x00000002
+  b0:	00000004 	.word	0x00000004
+  b4:	00000008 	.word	0x00000008
+  b8:	00000010 	.word	0x00000010
+  bc:	00000020 	.word	0x00000020
+  c0:	00000040 	.word	0x00000040
+  c4:	00000080 	.word	0x00000080
+  c8:	ff200000 	.word	0xff200000
+  cc:	000000a4 	.word	0x000000a4
+  d0:	ff200050 	.word	0xff200050
